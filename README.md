@@ -21,5 +21,12 @@ To get the token
 
 `./migrateProject.sh -s https://ocp_37:8443 -d https://ocp_39:8443 -t <ocp_37_token> -e <ocp_39_token> -p cool-app`
 
+Arguments:
+-s: Source cluster - The cluster that you are getting the project from
+-t: The token to use for the source cluster
+-d: Destination cluster - The cluster that you are expoting the project to
+-e: The token to use for the destination cluster
+-p: The project to export
+
 Once the migration has finished your destination cluster will start building your applications in the new namespace.
 
