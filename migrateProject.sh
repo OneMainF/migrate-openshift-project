@@ -6,7 +6,7 @@ function usage() {
 	exit 1
 }
 
-function valiate_args() {
+function validate_args() {
 
 	if [ -z "${SOURCECLUSTER}" ]
 	then
@@ -18,7 +18,7 @@ function valiate_args() {
 
 	if [ -z "${DESTCLUSTER}" ]
 	then
-		echo "Desintation cluster not set, exiting"
+		echo "Destination cluster not set, exiting"
 		exit 1
 	else
 		check_cluster "${DESTCLUSTER}"
@@ -61,7 +61,7 @@ function cleanUp() {
 
 }
 
-## No arguments passed, show useage
+## No arguments passed, show usage
 if [ $# -eq 0 ];
 then
 	usage
@@ -91,7 +91,7 @@ while getopts ":s:d:p:t:e:" o; do
 	esac
 done
 
-valiate_args
+validate_args
 
 echo "Log into ${SOURCECLUSTER}"
 oc login "${SOURCECLUSTER}" --token="${SOURCETOKEN}" > /dev/null
