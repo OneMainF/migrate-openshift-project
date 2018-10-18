@@ -57,7 +57,7 @@ function check_cluster() {
 
 function cleanUp() {
 
-	rm -r "${THISPROJECT}"_*.yaml
+	rm -r "${THISPROJECT:?}"_*.yaml
 
 }
 
