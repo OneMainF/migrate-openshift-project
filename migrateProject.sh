@@ -1,12 +1,12 @@
 #!/bin/bash
 
-function usage() { 
+function usage() {
 
 	echo "Usage: $0 [-s <source cluster>] [-d <destination cluster>] [-p <project (namespace)> [-t <source cluster token>] [-e <destination cluster token>]"
 	exit 1
 }
 
-function valiate_args() {
+function validate_args() {
 
 	if [ -z "${SOURCECLUSTER}" ]
 	then
@@ -18,7 +18,7 @@ function valiate_args() {
 
 	if [ -z "${DESTCLUSTER}" ]
 	then
-		echo "Desintation cluster not set, exiting"
+		echo "Destination cluster not set, exiting"
 		exit 1
 	else
 		check_cluster "${DESTCLUSTER}"
@@ -57,11 +57,11 @@ function check_cluster() {
 
 function cleanUp() {
 
-	rm -r ${THISPROJECT}_*.yaml
+	rm -r "${THISPROJECT:?}"_*.yaml
 
 }
 
-## No arguments passed, show useage
+## No arguments passed, show usage
 if [ $# -eq 0 ];
 then
 	usage
@@ -91,10 +91,10 @@ while getopts ":s:d:p:t:e:" o; do
 	esac
 done
 
-valiate_args
+validate_args
 
 echo "Log into ${SOURCECLUSTER}"
-oc login ${SOURCECLUSTER} --token="${SOURCETOKEN}" > /dev/null
+oc login "${SOURCECLUSTER}" --token="${SOURCETOKEN}" > /dev/null
 RES="$?"
 
 if [ "${RES}" -gt "0" ]
@@ -108,16 +108,16 @@ if [ "$(oc projects | grep -v "^Using" | grep -c " ${THISPROJECT} - ")" == "1" ]
 then
 	##stmt:Collect
 	echo "Getting objects from ${THISPROJECT} in ${SOURCECLUSTER}"
-	oc export project ${THISPROJECT} -o yaml > ${THISPROJECT}_project_init.yaml
-	oc export all -o yaml -n ${THISPROJECT} > ${THISPROJECT}_project.yaml
-	oc get rolebindings -o yaml --export=true -n ${THISPROJECT} > ${THISPROJECT}_rolebindings.yaml
-	oc get serviceaccount -o yaml --export=true -n ${THISPROJECT} > ${THISPROJECT}_serviceaccount.yaml
-	oc get secret -o yaml --export=true -n ${THISPROJECT} > ${THISPROJECT}_secret.yaml
-	oc get pvc -o yaml --export=true -n ${THISPROJECT} > ${THISPROJECT}_pvc.yaml
-	oc get configmap -o yaml --export=true -n ${THISPROJECT} > ${THISPROJECT}_configmap.yaml
-	oc get cronjob -o yaml --export=true -n ${THISPROJECT} > ${THISPROJECT}_cronjob.yaml
+	oc export project "${THISPROJECT}" -o yaml > "${THISPROJECT}"_project_init.yaml
+	oc export all -o yaml -n "${THISPROJECT}" > "${THISPROJECT}"_project.yaml
+	oc get rolebindings -o yaml --export=true -n "${THISPROJECT}" > "${THISPROJECT}"_rolebindings.yaml
+	oc get serviceaccount -o yaml --export=true -n "${THISPROJECT}" > "${THISPROJECT}"_serviceaccount.yaml
+	oc get secret -o yaml --export=true -n "${THISPROJECT}" > "${THISPROJECT}"_secret.yaml
+	oc get pvc -o yaml --export=true -n "${THISPROJECT}" > "${THISPROJECT}"_pvc.yaml
+	oc get configmap -o yaml --export=true -n "${THISPROJECT}" > "${THISPROJECT}"_configmap.yaml
+	oc get cronjob -o yaml --export=true -n "${THISPROJECT}" > "${THISPROJECT}"_cronjob.yaml
 
-	oc login ${DESTCLUSTER} --token="${DESTTOKEN}" > /dev/null
+	oc login "${DESTCLUSTER}" --token="${DESTTOKEN}" > /dev/null
 	RES="$?"
 
 	if [ "${RES}" -gt "0" ]
@@ -130,14 +130,14 @@ then
 	then
 		##stmt:Recreate
 		echo "Creating ${THISPROJECT} in ${DESTCLUSTER}"
-		oc create -f ${THISPROJECT}_project_init.yaml -n ${THISPROJECT}
-		oc create -f ${THISPROJECT}_project.yaml -n ${THISPROJECT}
-		oc create -f ${THISPROJECT}_secret.yaml -n ${THISPROJECT}
-		oc create -f ${THISPROJECT}_configmap.yaml -n ${THISPROJECT}
-		oc create -f ${THISPROJECT}_serviceaccount.yaml -n ${THISPROJECT}
-		oc create -f ${THISPROJECT}_pvc.yaml -n ${THISPROJECT}
-		oc create -f ${THISPROJECT}_rolebindings.yaml -n ${THISPROJECT}
-		oc create -f ${THISPROJECT}_cronjob.yaml -n ${THISPROJECT}
+		oc create -f "${THISPROJECT}"_project_init.yaml -n "${THISPROJECT}"
+		oc create -f "${THISPROJECT}"_project.yaml -n "${THISPROJECT}"
+		oc create -f "${THISPROJECT}"_secret.yaml -n "${THISPROJECT}"
+		oc create -f "${THISPROJECT}"_configmap.yaml -n "${THISPROJECT}"
+		oc create -f "${THISPROJECT}"_serviceaccount.yaml -n "${THISPROJECT}"
+		oc create -f "${THISPROJECT}"_pvc.yaml -n "${THISPROJECT}"
+		oc create -f "${THISPROJECT}"_rolebindings.yaml -n "${THISPROJECT}"
+		oc create -f "${THISPROJECT}"_cronjob.yaml -n "${THISPROJECT}"
 
 		cleanUp
 	else
